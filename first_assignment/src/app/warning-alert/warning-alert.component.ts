@@ -7,7 +7,10 @@ import { Component } from '@angular/core';
     <p>warning-alert works!</p>
   </div>`,
   styles: [`p{
-    color: orange
+    background-color: pink;
+    font-size: 18px;
+    padding: 18px;
+    border: 1px solid orange;
   }`]
 })
 export class WarningAlertComponent {
