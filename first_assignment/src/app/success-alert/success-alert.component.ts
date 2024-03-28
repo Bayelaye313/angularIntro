@@ -8,6 +8,9 @@ import { Component } from '@angular/core';
     font-size: 18px;
     padding: 18px;
     border: 1px solid green;
+  }
+  input{
+    border: 1px solid black;
   }`]
 })
 export class SuccessAlertComponent {
