@@ -1,1 +1,13 @@
 <app-recipe-item></app-recipe-item>
+<div class="grid-container">
+    <div class="grid-item" *ngFor="let prod of recette;">
+      <div class="product-card">
+        <img [src]="prod.image" [alt]="prod.name">
+        <div class="product-card-body">
+          <h3 class="product-card-title">
+            {{prod.name}}
+          </h3>
+          <p class="product-card-description">{{prod.description}}</p>
+        </div>
+    </div>
+  </div>

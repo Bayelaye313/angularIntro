@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { RecipeModel } from '../../NosModels/recipe.model';
+import { createdrecipes } from '../../datafake/recipe.generator';
 
 @Component({
   selector: 'app-recipe-list',
@@ -6,5 +8,9 @@ import { Component } from '@angular/core';
   styleUrl: './recipe-list.component.css'
 })
 export class RecipeListComponent {
+  recette!:RecipeModel[];
+  ngOnInit(){
+    this.recette = createdrecipes(5)
+  }
 
 }
