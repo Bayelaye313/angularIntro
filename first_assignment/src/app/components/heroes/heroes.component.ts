@@ -16,7 +16,7 @@ export class HeroesComponent {
 
   onClicked(hero:HeroModel):void{
     this.selectedHero = hero;
-    this.messagerieService.add(`HeroesComponent: Selected hero id=${hero.id}`)
+    this.messagerieService.add('HeroesComponent: Selected hero id=' + hero.id)
   }
   ngOnInit():void{
     this.heroService.getHeroes()
