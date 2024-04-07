@@ -10,14 +10,9 @@ import { MessageService } from '../../services/message.service';
 })
 export class HeroesComponent {
   heroes:HeroModel[] = [];
-  selectedHero?:HeroModel;
 
   constructor(private heroService: HeroService, private messagerieService: MessageService) { }
 
-  onClicked(hero:HeroModel):void{
-    this.selectedHero = hero;
-    this.messagerieService.add('HeroesComponent: Selected hero id=' + hero.id)
-  }
   ngOnInit():void{
     this.heroService.getHeroes()
     .subscribe(her=> this.heroes = her)
