@@ -13,9 +13,13 @@ export class DashboardComponent {
   constructor(private heroServe: HeroService){}
 
   ngOnInit():void{
+    this.getHero()
+  }
+  getHero():void{
     this.heroServe.getHeroes().subscribe(
       her=>this.heroes = her.slice(1,5)
     )
+
   }
 
 }

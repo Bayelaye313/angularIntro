@@ -14,9 +14,13 @@ export class HeroesComponent {
   constructor(private heroService: HeroService, private messagerieService: MessageService) { }
 
   ngOnInit():void{
-    this.heroService.getHeroes()
-    .subscribe(her=> this.heroes = her)
+    this.getHeroes()
   }
 
+  getHeroes():void{
+    this.heroService.getHeroes()
+    .subscribe(her=> this.heroes = her)
+
+  }
 
 }
