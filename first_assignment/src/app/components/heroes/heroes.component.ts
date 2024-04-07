@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { HeroModel } from './utilities/interfce/hero.interface';
-import { HeroService } from '../hero.service';
-import { MessageService } from '../message.service';
+import { HeroModel } from '../../utilities/interfce/hero.interface';
+import { HeroService } from '../../services/hero.service';
+import { MessageService } from '../../services/message.service';
 
 @Component({
   selector: 'app-heroes',
