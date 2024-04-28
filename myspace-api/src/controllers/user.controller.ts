@@ -1,40 +1,78 @@
+import { User } from "../model/user";
+import { userServices } from "../services/user.service";
+import { Request, Response } from "express";
 
-import  {userServices} from '../services/user.service';
-import {Request, Response} from 'express'
+export class userController {
+  private userService: userServices;
+  constructor() {
+    this.userService = new userServices();
+  }
 
-export const userController = {
-
-getUsers (req:Request, res:Response){
-    const list_users = userServices.getUsers();
-    res.json(list_users)
-},
-
-getById(req:Request,res:Response){
-    const userid = req.params.id;
-    const user = userServices.getUserId(userid);
-    res.json(user)
-},
-
-createUser(req:Request,res:Response){
-    const userdata = req.body;
-    if (!userServices.notExist(userdata.login)) {
-        const user = userServices.createUser(userdata)
-        res.status(200).json(user)    
-    }else{
-        res.status(400).json({ message: "user already exist with same login" });
+  async getUsers(req: Request, res: Response) {
+    try {
+      const list_users = await this.userService.getUsers();
+      res.json(list_users);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
     }
-},
-updateUser(req:Request,res:Response){
-    const userdata = req.body;
-    const userid = req.params.id;
+  }
 
-    const user = userServices.updateUser(userdata, userid)
-    res.status(200).json(user)
-},
+  async getById(req: Request, res: Response) {
+    try {
+      const user = await this.userService.getById(req.params.id);
+      if (user) {
+        res.json(user);
+      } else {
+        res.sendStatus(404);
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+  async createUser(req: Request, res: Response) {
+    const { firstname, lastname, login, password } = req.body;
+    if (
+      firstname === undefined ||
+      lastname === undefined ||
+      login === undefined ||
+      password === undefined
+    ) {
+      res.status(400).json({ Message: "contract not match" });
+    }
+    {
+      try {
+        const userNotExist = await this.userService.notExist(login);
+        if (!userNotExist) {
+          const user: User = { firstname, lastname, login, password };
+          const data = await this.userService.createUser(user);
+          res.status(200).json(data);
+        } else {
+          res
+            .status(400)
+            .json({ message: "user already exist with same login" });
+        }
+      } catch (error: any) {
+        res.status(500).json({ message: error.message });
+      }
+    }
+  }
+  async updateUser(req: Request, res: Response) {
+    try {
+      const user: User = req.body;
+      user.id = req.params.id as string;
+      const data = await this.userService.updateUser(user);
+      res.status(200).json(data);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
 
-deleteUser(req:Request,res:Response){
-    const userid = req.params.id;
-    userServices.deleteUser(userid);
-    res.sendStatus(204)
-}
-}
+  async deleteUser(req: Request, res: Response) {
+    try {
+        const id = req.params.id;
+        const result = await this.userService.deleteUser(id);
+        res.sendStatus(204);
+      } catch (error:any) {
+        res.status(500).json({ message: error.message });
+      }
+    }}
