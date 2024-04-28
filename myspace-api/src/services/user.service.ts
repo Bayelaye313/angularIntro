@@ -41,8 +41,8 @@ export class userServices {
   async createUser(newUser: User): Promise<User> {
     const rslt = await this.db.query(`
     INSERT INTO users (firstname,lastname,login,password)
-    VALUES (?,?,?,?),
-    [newUser.firstname, newUser.lastname, newUser.login, newUser.password]`);
+    VALUES (?,?,?,?)`,
+    [newUser.firstname, newUser.lastname, newUser.login, newUser.password]);
     return newUser;
   }
   //delete User
