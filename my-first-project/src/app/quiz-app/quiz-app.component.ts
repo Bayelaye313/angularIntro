@@ -38,11 +38,28 @@ export class QuizAppComponent implements OnInit, OnDestroy {
   }
 
   shuffleQuestions() {
-    // Randomize the order of questions using Fisher-Yates shuffle algorithm
+    // Randomize the order of questions
     for (let i = this.questionsList.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.questionsList[i], this.questionsList[j]] = [this.questionsList[j], this.questionsList[i]];
+
+      // Shuffle options for each question (including keeping the correct answer in its new position)
+      this.shuffleOptions(this.questionsList[i]);
     }
+  }
+
+  shuffleOptions(question: any) {
+    // Copy options array to avoid modifying original reference
+    const optionsCopy = [...question.options];
+
+    // Shuffle options array
+    for (let i = optionsCopy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [optionsCopy[i], optionsCopy[j]] = [optionsCopy[j], optionsCopy[i]];
+    }
+
+    // Update question options with shuffled options (including correct answer in new position)
+    question.options = optionsCopy;
   }
 
   start() {
@@ -62,6 +79,9 @@ export class QuizAppComponent implements OnInit, OnDestroy {
       question.options.forEach((option) => {
         option.isSelected = false;
       });
+
+      // Shuffle options for each question at the start of each quiz session
+      this.shuffleOptions(question);
     });
 
     this.shuffleQuestions(); // Randomize questions at the start of each quiz session
