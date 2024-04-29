@@ -5,10 +5,9 @@ import { Subscription, interval } from 'rxjs';
 @Component({
   selector: 'app-quiz-app',
   templateUrl: './quiz-app.component.html',
-  styleUrls: []
+  styleUrls: [],
 })
 export class QuizAppComponent implements OnInit, OnDestroy {
-
   showWarning: boolean = false;
   isQuizStarted: boolean = false;
   isQuizEnded: boolean = false;
@@ -17,8 +16,9 @@ export class QuizAppComponent implements OnInit, OnDestroy {
   remainingTime: number = 10;
   timerSubscription: Subscription | undefined;
   correctAnswerCount: number = 0;
+  playedQuestionIndices: Set<number> = new Set<number>(); // Track played question indices
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadQuestions();
@@ -31,53 +31,62 @@ export class QuizAppComponent implements OnInit, OnDestroy {
   }
 
   loadQuestions() {
-    this.http.get("assets/question.json").subscribe((res: any) => {
-      // Load all questions from JSON
+    this.http.get('assets/question.json').subscribe((res: any) => {
       const allQuestions: any[] = res;
 
-      // Randomly select 30 questions from all available questions
-      this.questionsList = this.selectRandomQuestions(allQuestions, 5);
+      this.questionsList = this.selectRandomQuestions(allQuestions, 10);
 
-      // Shuffle selected questions and options
       this.shuffleQuestions();
     });
   }
 
   selectRandomQuestions(allQuestions: any[], count: number): any[] {
-    // Shuffle all questions to randomize selection
-    const shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
+    const availableQuestions = allQuestions.filter(
+      (_, index) => !this.playedQuestionIndices.has(index)
+    );
 
-    // Select the first 'count' questions from shuffled list
-    return shuffledQuestions.slice(0, count);
+    if (availableQuestions.length < count) {
+      // If not enough available questions, reset played indices set
+      this.playedQuestionIndices.clear();
+    }
+
+    const shuffledAvailableQuestions = [...availableQuestions].sort(
+      () => 0.5 - Math.random()
+    );
+    const selectedQuestions = shuffledAvailableQuestions.slice(0, count);
+
+    // Add selected question indices to played set
+    selectedQuestions.forEach((question) => {
+      this.playedQuestionIndices.add(allQuestions.indexOf(question));
+    });
+
+    return selectedQuestions;
   }
 
   shuffleQuestions() {
-    // Randomize the order of selected questions
     for (let i = this.questionsList.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [this.questionsList[i], this.questionsList[j]] = [this.questionsList[j], this.questionsList[i]];
+      [this.questionsList[i], this.questionsList[j]] = [
+        this.questionsList[j],
+        this.questionsList[i],
+      ];
 
-      // Shuffle options for each selected question (including keeping the correct answer in its new position)
       this.shuffleOptions(this.questionsList[i]);
     }
   }
 
   shuffleOptions(question: any) {
-    // Copy options array to avoid modifying original reference
     const optionsCopy = [...question.options];
-
-    // Shuffle options array
     for (let i = optionsCopy.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [optionsCopy[i], optionsCopy[j]] = [optionsCopy[j], optionsCopy[i]];
     }
-
-    // Update question options with shuffled options (including correct answer in new position)
     question.options = optionsCopy;
   }
 
   start() {
     this.resetQuiz();
+    this.startQuiz();
   }
 
   resetQuiz() {
@@ -88,18 +97,10 @@ export class QuizAppComponent implements OnInit, OnDestroy {
     this.correctAnswerCount = 0;
     this.remainingTime = 10;
 
-    // Reset selected options in each selected question
-    this.questionsList.forEach((question) => {
-      question.options.forEach((option) => {
-        option.isSelected = false;
-      });
+    // Clear played question indices for a new session
+    this.playedQuestionIndices.clear();
 
-      // Shuffle options for each selected question at the start of each quiz session
-      this.shuffleOptions(question);
-    });
-
-    // Shuffle selected questions at the start of each quiz session
-    this.shuffleQuestions();
+    this.loadQuestions();
   }
 
   startQuiz() {
@@ -122,7 +123,7 @@ export class QuizAppComponent implements OnInit, OnDestroy {
   nextQuestion() {
     if (this.currentQuestionNo < this.questionsList.length - 1) {
       this.currentQuestionNo++;
-      this.remainingTime = 10; // Restart time for the next question
+      this.remainingTime = 10;
     } else {
       this.finish();
     }
@@ -157,7 +158,9 @@ export class QuizAppComponent implements OnInit, OnDestroy {
   }
 
   isOptionSelected(options: any) {
-    const selectionCount = options.filter((option: any) => option.isSelected).length;
+    const selectionCount = options.filter(
+      (option: any) => option.isSelected
+    ).length;
     return selectionCount > 0;
   }
 
