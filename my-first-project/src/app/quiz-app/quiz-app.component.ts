@@ -36,7 +36,7 @@ export class QuizAppComponent implements OnInit, OnDestroy {
       const allQuestions: any[] = res;
 
       // Randomly select 30 questions from all available questions
-      this.questionsList = this.selectRandomQuestions(allQuestions, 30);
+      this.questionsList = this.selectRandomQuestions(allQuestions, 5);
 
       // Shuffle selected questions and options
       this.shuffleQuestions();
