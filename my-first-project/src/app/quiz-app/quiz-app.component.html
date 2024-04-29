@@ -11,7 +11,7 @@
         <li class="info">Impossible de quitter le quiz une fois commencé</li>
     </ul>
     <div class="buttons">
-        <button class="quit" (click)="finish()">Exit</button>
+        <button class="quit" (click)="quitGame()">Exit</button>
         <button class="restart" (click)="startQuiz()">Continue</button>
     </div>
 </div>
@@ -61,7 +61,7 @@
     <div class="complete_text">You've Completed The Quizz! <strong>congrats 🎊🎊🎉</strong> </div>
     <div class="score_text" ><span>score finale: <p>{{ correctAnswerCount }} / {{ questionsList.length }}</p></span></div>
     <div class="buttons">
-        <button class="quit" (click)="finish()">Quit</button>
+        <button class="quit" (click)="exitGame()">Quit</button>
         <button class="restart" (click)="start()">Replay</button>
     </div>
 </div>
