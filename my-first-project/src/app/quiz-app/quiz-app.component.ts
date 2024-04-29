@@ -33,7 +33,16 @@ export class QuizAppComponent implements OnInit, OnDestroy {
   loadQuestions() {
     this.http.get("assets/question.json").subscribe((res: any) => {
       this.questionsList = res;
+      this.shuffleQuestions(); // Randomize questions after loading
     });
+  }
+
+  shuffleQuestions() {
+    // Randomize the order of questions using Fisher-Yates shuffle algorithm
+    for (let i = this.questionsList.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.questionsList[i], this.questionsList[j]] = [this.questionsList[j], this.questionsList[i]];
+    }
   }
 
   start() {
@@ -54,6 +63,8 @@ export class QuizAppComponent implements OnInit, OnDestroy {
         option.isSelected = false;
       });
     });
+
+    this.shuffleQuestions(); // Randomize questions at the start of each quiz session
   }
 
   startQuiz() {
