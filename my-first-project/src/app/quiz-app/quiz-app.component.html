@@ -1,0 +1,67 @@
+<div class="start_btn">
+    <button (click)="showWarningPopup()">Start Quizz</button>
+</div>
+
+<div class="info_box" [ngClass]="showWarning ? 'activeInfo' : ''">
+    <div class="info-title"><span>Quelques règles du jeu</span></div>
+    <ul class="info-list">
+        <li class="info"><span>10 secondes</span> pour répondre à une question</li>
+        <li class="info">Réponse sélectionnée, pas de retour en arrière</li>
+        <li class="info">Impossible de sélectionner une question une fois le temps écoulé</li>
+        <li class="info">Impossible de quitter le quiz une fois commencé</li>
+    </ul>
+    <div class="buttons">
+        <button class="quit" (click)="finish()">Exit</button>
+        <button class="restart" (click)="startQuiz()">Continue</button>
+    </div>
+</div>
+
+<div class="quiz_box" [ngClass]="isQuizStarted ? 'activeQuiz' : ''">
+    <header>
+        <div class="title">Leep tchi Sunu BRT</div>
+        <div class="timer">
+            <div class="time_left_txt">Time Left</div>
+            <time class="sec">{{ remainingTime }}</time>
+        </div>
+        <div class="time_line" style="width: 550px;"></div>
+    </header>
+    <section *ngIf="isQuizStarted">
+        <div class="que_text"><span>{{ questionsList[currentQuestionNo].question }}</span></div>
+        <div class="option_list">
+            <div
+                class="option"
+                *ngFor="let option of questionsList[currentQuestionNo].options; let i = index"
+                [ngClass]="{
+                    'correct': option.isCorrect && option.isSelected,
+                    'incorrect': !option.isCorrect && option.isSelected,
+                    'disabled': option.isDisabled
+                }"
+                (click)="selectOption(option)"
+            >
+                <span>{{ option.answer }}</span>
+                <div class="icon tick" *ngIf="option.isCorrect && option.isSelected">
+                    <i class="fas fa-check" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="total_que">
+            <span><p>{{ currentQuestionNo + 1 }}</p> of <p>{{ questionsList.length }}</p></span>
+        </div>
+        <button *ngIf="isQuizEnded" class="next_btn show" (click)="finish()">Finish</button>
+        <button *ngIf="!isQuizEnded && currentQuestionNo < questionsList.length - 1" class="next_btn show" (click)="nextQuestion()">Next Ques</button>
+    </footer>
+</div>
+
+<div class="result_box" [ngClass]="isQuizEnded ? 'activeResult' : ''">
+    <div class="icon">
+        <i class="fas fa-crown"></i>
+    </div>
+    <div class="complete_text">You've Completed The Quizz! <strong>congrats 🎊🎊🎉</strong> </div>
+    <div class="score_text" ><span>score finale: <p>{{ correctAnswerCount }} / {{ questionsList.length }}</p></span></div>
+    <div class="buttons">
+        <button class="quit" (click)="finish()">Quit</button>
+        <button class="restart" (click)="start()">Replay</button>
+    </div>
+</div>
