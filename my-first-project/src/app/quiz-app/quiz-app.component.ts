@@ -32,18 +32,32 @@ export class QuizAppComponent implements OnInit, OnDestroy {
 
   loadQuestions() {
     this.http.get("assets/question.json").subscribe((res: any) => {
-      this.questionsList = res;
-      this.shuffleQuestions(); // Randomize questions after loading
+      // Load all questions from JSON
+      const allQuestions: any[] = res;
+
+      // Randomly select 30 questions from all available questions
+      this.questionsList = this.selectRandomQuestions(allQuestions, 30);
+
+      // Shuffle selected questions and options
+      this.shuffleQuestions();
     });
   }
 
+  selectRandomQuestions(allQuestions: any[], count: number): any[] {
+    // Shuffle all questions to randomize selection
+    const shuffledQuestions = [...allQuestions].sort(() => 0.5 - Math.random());
+
+    // Select the first 'count' questions from shuffled list
+    return shuffledQuestions.slice(0, count);
+  }
+
   shuffleQuestions() {
-    // Randomize the order of questions
+    // Randomize the order of selected questions
     for (let i = this.questionsList.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.questionsList[i], this.questionsList[j]] = [this.questionsList[j], this.questionsList[i]];
 
-      // Shuffle options for each question (including keeping the correct answer in its new position)
+      // Shuffle options for each selected question (including keeping the correct answer in its new position)
       this.shuffleOptions(this.questionsList[i]);
     }
   }
@@ -74,17 +88,18 @@ export class QuizAppComponent implements OnInit, OnDestroy {
     this.correctAnswerCount = 0;
     this.remainingTime = 10;
 
-    // Reset selected options in each question
+    // Reset selected options in each selected question
     this.questionsList.forEach((question) => {
       question.options.forEach((option) => {
         option.isSelected = false;
       });
 
-      // Shuffle options for each question at the start of each quiz session
+      // Shuffle options for each selected question at the start of each quiz session
       this.shuffleOptions(question);
     });
 
-    this.shuffleQuestions(); // Randomize questions at the start of each quiz session
+    // Shuffle selected questions at the start of each quiz session
+    this.shuffleQuestions();
   }
 
   startQuiz() {
