@@ -19,7 +19,7 @@ export class userController {
 
   async getById(req: Request, res: Response) {
     try {
-      const user = await this.userService.getById(req.params.id);
+      const user = await this.userService.getById(Number(req.params.id));
       if (user) {
         res.json(user);
       } else {
@@ -43,7 +43,11 @@ export class userController {
       try {
         const userNotExist = await this.userService.notExist(login);
         if (!userNotExist) {
-          const user: User = { firstname, lastname, login, password };
+          const user: User = new User () ;
+          user.firstname = firstname;
+           user.lastname = lastname;
+           user.login = login;
+           user.password = password;
           const data = await this.userService.createUser(user);
           res.status(200).json(data);
         } else {
@@ -59,7 +63,7 @@ export class userController {
   async updateUser(req: Request, res: Response) {
     try {
       const user: User = req.body;
-      user.id = req.params.id as string;
+      user.id = Number (req.params.id);
       const data = await this.userService.updateUser(user);
       res.status(200).json(data);
     } catch (error: any) {

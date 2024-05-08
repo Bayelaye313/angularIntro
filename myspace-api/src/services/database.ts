@@ -1,10 +1,16 @@
 import sqlite3 from "sqlite3";
+import { AppDataSource } from "../data-source";
 
 export class Database {
   db: sqlite3.Database;
 
   constructor() {
-    this.db = new sqlite3.Database(
+    AppDataSource.initialize().then(async () => {
+
+      console.log("Init the database with sucess...")
+    })
+
+    /*this.db = new sqlite3.Database(
       process.env.SLQLITE_DB || "myspace.db",
       (err) => {
         if (err) {
@@ -45,7 +51,7 @@ export class Database {
             }
         })
 
-    })
+    })*/
   }
 }
 
